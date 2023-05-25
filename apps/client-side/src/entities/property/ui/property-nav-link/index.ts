@@ -1,0 +1,1 @@
+export { default as PropertyNavLink } from './ui.vue'

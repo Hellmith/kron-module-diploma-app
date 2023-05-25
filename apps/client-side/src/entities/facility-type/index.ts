@@ -1,0 +1,1 @@
+export * as facilityTypeModel from './model'

@@ -1,0 +1,1 @@
+export { default as FacilityNavLink } from './ui.vue'

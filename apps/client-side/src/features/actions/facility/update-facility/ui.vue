@@ -1,0 +1,95 @@
+<template>
+	<Button v-tooltip.bottom="`Обновить`" icon="pi pi-cog" size="small" severity="warning" @click="visible = true" />
+	<Sidebar v-model:visible="visible">
+		<template #header>
+			<SidebarHeader :label="`Редактирование: ${facility.name}`" />
+		</template>
+		<div class="tw-flex tw-h-full tw-flex-col tw-justify-between">
+			<div class="tw-mt-[calc(1.25rem_+_1.5px)] tw-flex tw-flex-col tw-space-y-4">
+				<InputWithHelp help="Введите аббревиатуру">
+					<InputText v-model="name" :disabled="isUpdateLoading" placeholder="Название объекта" class="p-inputtext-sm" />
+				</InputWithHelp>
+				<InputWithHelp help="0 - Тест, 1 - Активный, 2 - Неактивный.">
+					<Dropdown v-model="mode" :disabled="isUpdateLoading" class="p-inputtext-sm" :options="modes" optionLabel="id" showClear
+						placeholder="Режим работы" />
+				</InputWithHelp>
+				<InputWithHelp help="От -90 до +90.">
+					<InputNumber v-model="coordX" :minFractionDigits="2" :maxFractionDigits="5" :disabled="isUpdateLoading" class="p-inputtext-sm"
+						placeholder="Координата X" inputId="coord" suffix=" X" :min="-90" :max="90" />
+				</InputWithHelp>
+				<InputWithHelp help="От -180 до +180.">
+					<InputNumber v-model="coordY" :minFractionDigits="2" :maxFractionDigits="5" :disabled="isUpdateLoading" class="p-inputtext-sm"
+						placeholder="Координата Y" inputId="coord" suffix=" Y" :min="-180" :max="180" />
+				</InputWithHelp>
+				<InputWithHelp help="Выберите тип.">
+					<Dropdown v-model="type" :options="facilityTypes" optionLabel="name" class="p-inputtext-sm" showClear placeholder="Тип объекта"
+						:disabled="isUpdateLoading">
+						<template #option="slot">
+							<div class="tw-flex tw-items-center tw-gap-3">
+								<img :alt="slot.option.name" :src="`icons/24x24/${slot.option.node_index}.png`" width="24">
+								<div>{{ slot.option.name }}</div>
+							</div>
+						</template>
+					</Dropdown>
+				</InputWithHelp>
+			</div>
+			<div class="tw-flex tw-items-center tw-justify-end tw-gap-2">
+				<a href="https://yandex.ru/maps/geo/respublika_tatarstan/53000069/?ll=50.750533%2C55.349442&z=8.04" target="_blank">
+					<Button v-tooltip.top="`Посмотреть карту`" icon="pi pi-map" severity="help" size="small" />
+				</a>
+				<Button label="Обновить" severity="success" icon="pi pi-check" size="small" :loading="isUpdateLoading" @click="handleUpdateFacility()" />
+			</div>
+		</div>
+	</Sidebar>
+</template>
+
+<script setup lang="ts">
+	import { computed, onMounted, ref } from 'vue'
+	import { useRoute } from 'vue-router'
+	import { useStore } from 'vuex'
+
+	import { Facility } from 'shared/api'
+	import { InputWithHelp } from 'shared/ui/forms'
+	import { SidebarHeader } from 'shared/ui/sidebar-header'
+
+	import { facilityModel } from 'entities/facility'
+	import { facilityTypeModel } from 'entities/facility-type'
+
+	const props = defineProps<{ facility: Facility }>()
+
+	const store = useStore()
+	const route = useRoute()
+
+	onMounted(() => store.dispatch(facilityTypeModel[ 'actions' ].getFacilityListAsync))
+
+	const visible = ref(false)
+	const name = ref<string>(props.facility.name)
+	const coordX = ref<number>(props.facility.coord_x)
+	const coordY = ref<number>(props.facility.coord_y)
+	const mode = ref<{ id: number }>({ id: 0 })
+	const modes = ref([ { id: '0' }, { id: '1' }, { id: '2' } ])
+	const type = ref(props.facility.facility_type)
+
+	const facilityTypes = computed(() => store.getters[ facilityTypeModel[ 'getters' ].useList ])
+	const isUpdateLoading = computed(() => store.getters[ facilityModel[ 'getters' ].isUpdateLoading ])
+
+	const handleUpdateFacility = () => {
+		store.dispatch(facilityModel[ 'actions' ].updateFacilityAsync, {
+			id: route.params.id,
+			params: {
+				coord_x: coordX.value,
+				coord_y: coordY.value,
+				facility_type: type.value,
+				mode: mode.value.id == 0 ? props.facility.mode : mode.value.id,
+				name: name.value
+			}
+		})
+		visible.value = false
+	}
+</script>
+
+<style lang="scss">
+	.p-sidebar-header {
+		justify-content: space-between;
+	}
+</style>

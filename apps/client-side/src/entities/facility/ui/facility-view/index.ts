@@ -1,0 +1,1 @@
+export { default as FacilityView } from './ui.vue'

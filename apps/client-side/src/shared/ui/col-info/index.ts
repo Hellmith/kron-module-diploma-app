@@ -1,0 +1,1 @@
+export { default as ColInfo } from './ui.vue'

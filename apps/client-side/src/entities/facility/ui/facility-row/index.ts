@@ -1,0 +1,1 @@
+export { default as FacilityRow } from './ui.vue'

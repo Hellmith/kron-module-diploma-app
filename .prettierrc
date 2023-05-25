@@ -1,0 +1,22 @@
+{
+	"pluginSearchDirs": ["./node_modules"],
+	"plugins": ["prettier-plugin-tailwindcss", "prettier-plugin-java", "@prettier/plugin-xml"],
+	"singleQuote": true,
+	"arrowParens": "avoid",
+	"printWidth": 160,
+	"bracketSpacing": true,
+	"bracketSameLine": false,
+	"cursorOffset": 4,
+	"embeddedLanguageFormatting": "auto",
+	"endOfLine": "auto",
+	"htmlWhitespaceSensitivity": "css",
+	"insertPragma": false,
+	"jsxSingleQuote": true,
+	"proseWrap": "always",
+	"quoteProps": "preserve",
+	"vueIndentScriptAndStyle": true,
+	"tabWidth": 4,
+	"semi": false,
+	"trailingComma": "none",
+	"useTabs": true
+}

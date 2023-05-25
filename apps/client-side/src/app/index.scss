@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+
+/**
+ * Layer base
+ */
+@layer base {
+	html {
+		@apply tw-overflow-x-hidden tw-overflow-y-hidden;
+	}
+	::-webkit-scrollbar {
+		@apply tw-h-1 tw-w-1;
+	}
+	::-webkit-scrollbar-track {
+		@apply tw-rounded-md tw-bg-transparent;
+	}
+	::-webkit-scrollbar-thumb {
+		@apply tw-rounded-md tw-bg-indigo-600;
+	}
+}

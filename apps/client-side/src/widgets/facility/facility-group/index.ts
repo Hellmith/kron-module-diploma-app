@@ -1,0 +1,1 @@
+export { default as FacilityGroup } from './ui.vue'

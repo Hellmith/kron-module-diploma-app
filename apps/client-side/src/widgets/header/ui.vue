@@ -1,0 +1,302 @@
+<template>
+	<Menubar :model="authorities === `ADMIN` ? actions : []"
+		class="fadeinup animation-duration-300 animation-iteration-1 animation-ease-in tw-justify-between tw-space-x-3 tw-gap-3">
+		<template #start>
+			<RouterLink to="/" class="tw-flex tw-items-center tw-gap-3 tw-text-xl tw-font-bold">
+				<Image src="emblem.png" width="40" alt="emblem" />
+				{{ APP[ 'title' ] }}
+			</RouterLink>
+		</template>
+		<template #end>
+			<LogoutButton />
+		</template>
+	</Menubar>
+
+	<!-- OPTIONS -->
+	<Sidebar v-model:visible="createOptionVisible">
+		<template #header>
+			<SidebarHeader label="Новая опция" />
+		</template>
+		<div class="tw-flex tw-h-full tw-flex-col tw-justify-between">
+			<div class="tw-mt-[calc(1.25rem_+_1.5px)] tw-flex tw-flex-col tw-space-y-4">
+				<InputWithHelp help="Введите уникальное значение.">
+					<InputText v-model="optionName" placeholder="Название опции" class="p-inputtext-sm" :disabled="isCreateOptionLoading" required />
+				</InputWithHelp>
+				<InputWithHelp help="Введите значение.">
+					<InputText v-model="optionValue" placeholder="Значение опции" class="p-inputtext-sm" :disabled="isCreateOptionLoading" required />
+				</InputWithHelp>
+				<div class="tw-flex tw-items-center tw-justify-end tw-gap-2">
+					<Button label="Добавить" severity="success" icon="pi pi-check" size="small" :loading="isCreateOptionLoading" @click="handleCreateOption()" />
+				</div>
+			</div>
+		</div>
+	</Sidebar>
+	<Sidebar v-model:visible="updateOptionVisible">
+		<template #header>
+			<SidebarHeader label="Редактирование" />
+		</template>
+		<div class="tw-flex tw-h-full tw-flex-col tw-justify-between">
+			<div class="tw-mt-[calc(1.25rem_+_1.5px)] tw-flex tw-flex-col tw-space-y-4">
+				<InputWithHelp help="Выберите из списка опцию для редактирования.">
+					<Dropdown v-model="currentOption" :options="options" optionLabel="name" class="p-inputtext-sm" showClear placeholder="Опция"
+						:disabled="isUpdateOptionLoading" />
+				</InputWithHelp>
+				<InputWithHelp help="Введите значение.">
+					<InputText v-model="updOptionName" placeholder="Название опции" class="p-inputtext-sm" :disabled="isUpdateOptionLoading" />
+				</InputWithHelp>
+				<InputWithHelp help="Введите значение.">
+					<InputText v-model="updOptionValue" placeholder="Значение опции" class="p-inputtext-sm" :disabled="isUpdateOptionLoading" />
+				</InputWithHelp>
+				<div class="tw-flex tw-items-center tw-justify-end tw-gap-2">
+					<Button label="Обновить" severity="success" icon="pi pi-check" size="small" :loading="isUpdateOptionLoading" @click="handleUpdateOption()" />
+				</div>
+			</div>
+		</div>
+	</Sidebar>
+	<Dialog v-model:visible="deleteOptionVisible" modal header="Удаление опции" :style="{ width: '25vw' }">
+		<InputWithHelp help="Выберите из опцию из списка для удаления.">
+			<Dropdown v-model="currentOption" :options="options" optionLabel="name" class="p-inputtext-sm" showClear placeholder="Опция" />
+		</InputWithHelp>
+		<template #footer>
+			<Button label='Отмена' icon='pi pi-times' text size='small' @click='deleteOptionVisible = false' />
+			<Button label="Удалить" icon="pi pi-check" severity='danger' size='small' @click="handleDeleteOption()" />
+		</template>
+	</Dialog>
+
+	<!-- FACILITYTYPE -->
+	<Sidebar v-model:visible="createFacilityTypeVisible">
+		<template #header>
+			<SidebarHeader label="Новый тип объекта" />
+		</template>
+		<div class="tw-flex tw-h-full tw-flex-col tw-justify-between">
+			<div class="tw-mt-[calc(1.25rem_+_1.5px)] tw-flex tw-flex-col tw-space-y-4">
+				<InputWithHelp help="Введите текст.">
+					<InputText v-model="facilityTypeName" placeholder="Название типа" class="p-inputtext-sm" :disabled="isCreateFacilityTypeLoading" required />
+				</InputWithHelp>
+				<InputWithHelp help="Введите текст.">
+					<InputText v-model="shortName" placeholder="Короткое название" class="p-inputtext-sm" :disabled="isCreateFacilityTypeLoading" required />
+				</InputWithHelp>
+				<InputWithHelp help="Введите значение.">
+					<InputNumber v-model="nodeIndex" placeholder="Идентификатор узла" class="p-inputtext-sm" :disabled="isCreateFacilityTypeLoading" required />
+				</InputWithHelp>
+				<div class="tw-flex tw-items-center tw-justify-end tw-gap-2">
+					<Button label="Добавить" severity="success" icon="pi pi-check" size="small" :loading="isCreateFacilityTypeLoading"
+						@click="handleCreateFacilityType()" />
+				</div>
+			</div>
+		</div>
+	</Sidebar>
+	<Sidebar v-model:visible="updateFacilityTypeVisible">
+		<template #header>
+			<SidebarHeader label="Редактирование" />
+		</template>
+		<div class="tw-flex tw-h-full tw-flex-col tw-justify-between">
+			<div class="tw-mt-[calc(1.25rem_+_1.5px)] tw-flex tw-flex-col tw-space-y-4">
+				<InputWithHelp help="Выберите из списка тип для редактирования.">
+					<Dropdown v-model="currentFacilityType" :options="facilityTypes" optionLabel="name" class="p-inputtext-sm" showClear placeholder="Тип объекта"
+						:disabled="isUpdateFacilityTypeLoading">
+						<template #option="slot">
+							<div class="tw-flex tw-items-center tw-gap-3">
+								<img :alt="slot.option.name" :src="`icons/24x24/${slot.option.node_index}.png`" width="24">
+								<div>{{ slot.option.name }}</div>
+							</div>
+						</template>
+					</Dropdown>
+				</InputWithHelp>
+				<InputWithHelp help="Введите текст.">
+					<InputText v-model="updFacilityTypeName" placeholder="Название типа" class="p-inputtext-sm" :disabled="isUpdateFacilityTypeLoading" />
+				</InputWithHelp>
+				<InputWithHelp help="Введите текст.">
+					<InputText v-model="updShortName" placeholder="Короткое название" class="p-inputtext-sm" :disabled="isUpdateFacilityTypeLoading" />
+				</InputWithHelp>
+				<InputWithHelp help="Введите значение.">
+					<InputNumber v-model="updNodeIndex" placeholder="Идентификатор узла" class="p-inputtext-sm" :disabled="isUpdateFacilityTypeLoading" required />
+				</InputWithHelp>
+				<div class="tw-flex tw-items-center tw-justify-end tw-gap-2">
+					<Button label="Обновить" severity="success" icon="pi pi-check" size="small" :loading="isUpdateFacilityTypeLoading"
+						@click="handleUpdateFacilityType()" />
+				</div>
+			</div>
+		</div>
+	</Sidebar>
+	<Dialog v-model:visible="deleteFacilityTypeVisible" modal header="Удаление типа" :style="{ width: '25vw' }">
+		<InputWithHelp help="Выберите из тип из списка для удаления.">
+			<Dropdown v-model="currentFacilityType" :options="facilityTypes" optionLabel="name" class="p-inputtext-sm" showClear placeholder="Тип объекта"
+				:disabled="isUpdateFacilityTypeLoading">
+				<template #option="slot">
+					<div class="tw-flex tw-items-center tw-gap-3">
+						<img :alt="slot.option.name" :src="`icons/24x24/${slot.option.node_index}.png`" width="24">
+						<div>{{ slot.option.name }}</div>
+					</div>
+				</template>
+			</Dropdown>
+		</InputWithHelp>
+		<template #footer>
+			<Button label='Отмена' icon='pi pi-times' text size='small' @click='deleteFacilityTypeVisible = false' />
+			<Button label="Удалить" icon="pi pi-check" severity='danger' size='small' @click="handleDeleteFacilityType()" />
+		</template>
+	</Dialog>
+</template>
+
+<script setup lang="ts">
+	import { computed, onMounted, ref } from 'vue'
+	import { useStore } from 'vuex'
+
+	import { APP } from 'shared/config'
+	import { InputWithHelp } from 'shared/ui/forms'
+	import { SidebarHeader } from 'shared/ui/sidebar-header'
+
+	import { facilityTypeModel } from 'entities/facility-type'
+	import { optionModel } from 'entities/options'
+
+	import { authModel, LogoutButton } from 'features/auth'
+
+	const store = useStore()
+
+	onMounted(() => {
+		store.dispatch(optionModel.actions[ 'getFacilityListAsync' ])
+	})
+
+	const authorities = computed(() => store.getters[ authModel.getters[ 'useAuthorities' ] ])
+
+	const createOptionVisible = ref(false)
+
+	const optionName = ref('')
+	const optionValue = ref('')
+
+	const isCreateOptionLoading = computed(() => store.getters[ optionModel.getters[ 'isCreateLoading' ] ])
+
+	const handleCreateOption = () => {
+		store.dispatch(optionModel.actions[ 'onCrtOptionAsync' ], {
+			name: optionName.value,
+			value: optionValue.value
+		})
+		createOptionVisible.value = false
+	}
+
+	const options = computed(() => store.getters[ optionModel.getters[ 'useList' ] ])
+	const currentOption = ref()
+
+	const updateOptionVisible = ref(false)
+
+	const updOptionName = ref('')
+	const updOptionValue = ref('')
+
+	const isUpdateOptionLoading = computed(() => store.getters[ optionModel.getters[ 'isUpdateLoading' ] ])
+
+	const handleUpdateOption = () => {
+		store.dispatch(optionModel.actions[ 'onUpdOptionAsync' ], {
+			id: currentOption.value.id,
+			params: {
+				name: updOptionName.value || currentOption.value.name,
+				value: updOptionValue.value || currentOption.value.value
+			}
+		})
+		updateOptionVisible.value = false
+		currentOption.value = {}
+	}
+
+	const deleteOptionVisible = ref(false)
+
+	const handleDeleteOption = () => {
+		store.dispatch(optionModel.actions[ 'onDelOptionAsync' ], {
+			id: currentOption.value.id
+		})
+		deleteOptionVisible.value = false
+		currentOption.value = {}
+	}
+
+	const createFacilityTypeVisible = ref(false)
+
+	const facilityTypeName = ref('')
+	const shortName = ref('')
+	const nodeIndex = ref<number>()
+
+	const isCreateFacilityTypeLoading = computed(() => store.getters[ facilityTypeModel.getters[ 'isCreateLoading' ] ])
+
+	const handleCreateFacilityType = () => {
+		store.dispatch(facilityTypeModel.actions[ 'createFacilityTypeAsync' ], {
+			name: facilityTypeName.value,
+			short_name: shortName.value,
+			node_index: nodeIndex.value
+		})
+		createFacilityTypeVisible.value = false
+	}
+
+	const updateFacilityTypeVisible = ref(false)
+
+	const facilityTypes = computed(() => store.getters[ facilityTypeModel.getters[ 'useList' ] ])
+	const currentFacilityType = ref()
+
+	const updFacilityTypeName = ref('')
+	const updShortName = ref('')
+	const updNodeIndex = ref<number>()
+
+	const isUpdateFacilityTypeLoading = computed(() => store.getters[ facilityTypeModel.getters[ 'isUpdateLoading' ] ])
+
+	const handleUpdateFacilityType = () => {
+		store.dispatch(facilityTypeModel.actions[ 'updateFacilityTypeAsync' ], {
+			id: currentFacilityType.value.id,
+			params: {
+				name: updFacilityTypeName.value || currentFacilityType.value.name,
+				short_name: updShortName.value || currentFacilityType.value.short_name,
+				node_index: updNodeIndex.value || currentFacilityType.value.node_index
+			}
+		})
+		updateFacilityTypeVisible.value = false
+		currentFacilityType.value = {}
+	}
+
+	const deleteFacilityTypeVisible = ref(false)
+
+	const handleDeleteFacilityType = () => {
+		store.dispatch(facilityTypeModel.actions[ 'deleteFacilityTypeAsync' ], {
+			id: currentFacilityType.value.id
+		})
+		deleteFacilityTypeVisible.value = false
+		currentFacilityType.value = {}
+	}
+
+	const actions = ref([
+		{
+			label: 'Опции',
+			items: [
+				{
+					label: 'Добавить',
+					icon: 'pi pi-fw pi-pencil',
+					command: () => createOptionVisible.value = true
+				},
+				{
+					label: 'Редактировать',
+					icon: 'pi pi-fw pi-cog',
+					command: () => updateOptionVisible.value = true
+				},
+				{
+					label: 'Удалить',
+					icon: 'pi pi-fw pi-trash',
+					command: () => deleteOptionVisible.value = true
+				}
+			]
+		},
+		{
+			label: 'Типы объекта',
+			items: [
+				{
+					label: 'Добавить',
+					icon: 'pi pi-fw pi-pencil',
+					command: () => createFacilityTypeVisible.value = true
+				},
+				{
+					label: 'Редактировать',
+					icon: 'pi pi-fw pi-cog',
+					command: () => updateFacilityTypeVisible.value = true
+				},
+				{
+					label: 'Удалить',
+					icon: 'pi pi-fw pi-trash',
+					command: () => deleteFacilityTypeVisible.value = true
+				}
+			]
+		}
+	])
+</script>

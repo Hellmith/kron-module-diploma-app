@@ -1,0 +1,1 @@
+export { default as FacilityCard } from './ui.vue'
