@@ -10,7 +10,8 @@ export type FacilityType = IFacilityTypeResponse
 
 export interface IScriptResponse {
 	id: number
-	design_web: string | null
+	design_web: any
+	for_facility: number
 }
 export type Script = IScriptResponse
 

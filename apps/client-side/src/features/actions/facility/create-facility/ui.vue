@@ -1,87 +1,1 @@
-<template>
-	<Button icon="pi pi-pencil" iconPos="right" size="small" severity="info" label="Добавить новый объект" @click="visible = true" />
-	<Sidebar v-model:visible="visible">
-		<template #header>
-			<SidebarHeader label="Новый объект" />
-		</template>
-		<div class="tw-flex tw-h-full tw-flex-col tw-justify-between">
-			<div class="tw-mt-[calc(1.25rem_+_1.5px)] tw-flex tw-flex-col tw-space-y-4">
-				<InputWithHelp help="Введите аббревиатуру">
-					<InputText v-model="name" placeholder="Название объекта" class="p-inputtext-sm" autofocus :disabled="isCreateLoading" required />
-				</InputWithHelp>
-				<InputWithHelp help="0 - Тест, 1 - Активный, 2 - Неактивный.">
-					<Dropdown v-model="mode" class="p-inputtext-sm" :options="modes" optionLabel="id" showClear placeholder="Режим работы"
-						:disabled="isCreateLoading" required />
-				</InputWithHelp>
-				<InputWithHelp help="От -90 до +90.">
-					<InputNumber v-model="coordX" class="p-inputtext-sm" :minFractionDigits="2" :maxFractionDigits="5" required placeholder="Координата X"
-						inputId="coord" suffix=" X" :min="-90" :max="90" :disabled="isCreateLoading" />
-				</InputWithHelp>
-				<InputWithHelp help="От -180 до +180.">
-					<InputNumber v-model="coordY" class="p-inputtext-sm" :minFractionDigits="2" :maxFractionDigits="5" required placeholder="Координата Y"
-						inputId="coord" suffix=" Y" :min="-180" :max="180" :disabled="isCreateLoading" />
-				</InputWithHelp>
-				<InputWithHelp help="Выберите тип.">
-					<Dropdown v-model="type" :options="facilityTypes" optionLabel="name" class="p-inputtext-sm" showClear placeholder="Тип объекта"
-						:disabled="isCreateLoading" required>
-						<template #option="slot">
-							<div class="tw-flex tw-items-center tw-gap-3">
-								<img :alt="slot.option.name" :src="`icons/24x24/${slot.option.node_index}.png`" width="24">
-								<div>{{ slot.option.name }}</div>
-							</div>
-						</template>
-					</Dropdown>
-				</InputWithHelp>
-			</div>
-			<div class="tw-flex tw-items-center tw-justify-end tw-gap-2">
-				<a href="https://yandex.ru/maps/geo/respublika_tatarstan/53000069/?ll=50.750533%2C55.349442&z=8.04" target="_blank">
-					<Button v-tooltip.top="`Посмотреть карту`" icon="pi pi-map" severity="help" size="small" />
-				</a>
-				<Button label="Добавить" severity="success" icon="pi pi-check" size="small" :loading="isCreateLoading" @click="handleCreateFacility()" />
-			</div>
-		</div>
-	</Sidebar>
-</template>
-
-<script setup lang="ts">
-	import { computed, onMounted, ref } from 'vue'
-	import { useStore } from 'vuex'
-
-	import { InputWithHelp } from 'shared/ui/forms'
-	import { SidebarHeader } from 'shared/ui/sidebar-header'
-
-	import { facilityModel } from 'entities/facility'
-	import { facilityTypeModel } from 'entities/facility-type'
-
-	const store = useStore()
-
-	onMounted(() => store.dispatch(facilityTypeModel.actions[ 'getFacilityListAsync' ]))
-
-	const visible = ref(false)
-	const name = ref('')
-	const coordX = ref<number>()
-	const coordY = ref<number>()
-	const mode = ref()
-	const modes = ref([ { id: '0' }, { id: '1' }, { id: '2' } ])
-	const type = ref<string>()
-
-	const facilityTypes = computed(() => store.getters[ facilityTypeModel[ 'getters' ].useList ])
-	const isCreateLoading = computed(() => store.getters[ facilityModel[ 'getters' ].isCreateLoading ])
-
-	const handleCreateFacility = () => {
-		store.dispatch(facilityModel.actions[ 'createFacilityAsync' ], {
-			coord_x: coordX.value,
-			coord_y: coordY.value,
-			facility_type: type.value,
-			mode: mode.value?.id,
-			name: name.value
-		})
-		visible.value = false
-	}
-</script>
-
-<style lang="scss">
-	.p-sidebar-header {
-		justify-content: space-between;
-	}
-</style>
+<template>	<Button		icon="pi pi-pencil"		iconPos="right"		size="small"		severity="info"		label="Добавить новый объект"		@click="visible = true"	/>	<Sidebar v-model:visible="visible">		<template #header>			<SidebarHeader label="Новый объект" />		</template>		<div class="tw-flex tw-h-full tw-flex-col tw-justify-between">			<div class="tw-mt-[calc(1.25rem_+_1.5px)] tw-flex tw-flex-col tw-space-y-4">				<InputWithHelp help="Введите аббревиатуру">					<InputText						v-model="name"						placeholder="Название объекта"						class="p-inputtext-sm"						:disabled="isCreateLoading"					/>				</InputWithHelp>				<InputWithHelp help="0 - Тест, 1 - Активный, 2 - Неактивный.">					<Dropdown						v-model="mode"						class="p-inputtext-sm"						:options="modes"						optionLabel="id"						showClear						placeholder="Режим работы"						:disabled="isCreateLoading"					/>				</InputWithHelp>				<InputWithHelp help="От -90 до +90.">					<InputNumber						v-model="coordX"						class="p-inputtext-sm"						:minFractionDigits="2"						:maxFractionDigits="5"						placeholder="Координата X"						inputId="coord"						suffix=" X"						:min="-90"						:max="90"						:disabled="isCreateLoading"					/>				</InputWithHelp>				<InputWithHelp help="От -180 до +180.">					<InputNumber						v-model="coordY"						class="p-inputtext-sm"						:minFractionDigits="2"						:maxFractionDigits="5"						placeholder="Координата Y"						inputId="coord"						suffix=" Y"						:min="-180"						:max="180"						:disabled="isCreateLoading"					/>				</InputWithHelp>				<InputWithHelp help="Выберите тип.">					<Dropdown						v-model="type"						:options="facilityTypes"						optionLabel="name"						class="p-inputtext-sm"						showClear						placeholder="Тип объекта"						:disabled="isCreateLoading"					>						<template #option="slot">							<div class="tw-flex tw-items-center tw-gap-3">								<img									:alt="slot.option.name"									:src="`icons/24x24/${slot.option.node_index}.png`"									width="24"								/>								<div>{{ slot.option.name }}</div>							</div>						</template>					</Dropdown>				</InputWithHelp>			</div>			<div class="tw-flex tw-items-center tw-justify-end tw-gap-2">				<a					href="https://yandex.ru/maps/geo/respublika_tatarstan/53000069/?ll=50.750533%2C55.349442&z=8.04"					target="_blank"				>					<Button v-tooltip.top="`Посмотреть карту`" icon="pi pi-map" severity="help" size="small" />				</a>				<Button					label="Добавить"					severity="success"					icon="pi pi-check"					size="small"					:loading="isCreateLoading"					@click="handleCreateFacility"				/>			</div>		</div>	</Sidebar></template><script setup lang="ts">	import { computed, onMounted, ref } from 'vue'	import { useStore } from 'vuex'	import { InputWithHelp } from 'shared/ui/forms'	import { SidebarHeader } from 'shared/ui/sidebar-header'	import { facilityModel } from 'entities/facility'	import { facilityTypeModel } from 'entities/facility-type'	/**	 * Store composable	 */	const { dispatch, getters } = useStore()	/**	 * Actions on mounted	 */	onMounted(() => {		dispatch(facilityTypeModel.actions['getFacilityListAsync'])	})	// Canvas visible	const visible = ref(false)	// Facility modes	const modes = ref([{ id: '0' }, { id: '1' }, { id: '2' }])	// Create facility form	const name = ref('')	const coordX = ref<number>()	const coordY = ref<number>()	const mode = ref()	const type = ref<string>()	const facilityTypes = computed(() => {		return getters[facilityTypeModel.getters['useList']]	})	const isCreateLoading = computed(() => {		return getters[facilityModel.getters['isCreateLoading']]	})	const handleCreateFacility = () => {		dispatch(facilityModel.actions['createFacilityAsync'], {			coord_x: coordX.value,			coord_y: coordY.value,			facility_type: type.value,			mode: mode.value?.id,			name: name.value		})		visible.value = false	}</script><style lang="scss">	.p-sidebar-header {		justify-content: space-between;	}</style>

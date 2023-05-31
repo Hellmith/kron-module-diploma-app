@@ -1,1 +1,1 @@
-<template>	<AuthCard /></template><script setup lang="ts">import { AuthCard } from 'widgets/auth-card'</script>
+<template>	<AuthCard /></template><script setup lang="ts">	import { AuthCard } from 'widgets/auth-card'</script>

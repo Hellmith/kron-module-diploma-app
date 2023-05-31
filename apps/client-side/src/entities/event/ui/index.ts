@@ -1,1 +1,1 @@
-export * from './event-nav-link'
+export * from './event-nav-link'

@@ -1,14 +1,1 @@
-<template>
-	<Button
-		label="События"
-		icon="pi pi-table"
-		size="small"
-		:severity="$route.name !== 'facility-events-viewer' ? 'secondary' : 'primary'"
-		:text="$route.name !== 'facility-events-viewer' ? true : false"
-		@click="$router.push({ name: `facility-events-viewer`, params: { id: facilityId } })"
-	/>
-</template>
-
-<script setup lang="ts">
-	defineProps<{ facilityId: number }>()
-</script>
+<template>	<Button		label="События"		icon="pi pi-table"		size="small"		:severity="$route.name !== 'facility-events-viewer' ? 'secondary' : 'primary'"		:text="$route.name !== 'facility-events-viewer' ? true : false"		@click="			$router.push({				name: `facility-events-viewer`,				params: {					id: facilityId				}			})		"	/></template><script setup lang="ts">	defineProps<{ facilityId: number }>()</script>

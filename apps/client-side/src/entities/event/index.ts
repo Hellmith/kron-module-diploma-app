@@ -1,2 +1,1 @@
-export * from './ui'
-export * as eventModel from './model'
+export * as eventModel from './model'export * from './ui'

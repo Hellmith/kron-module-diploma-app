@@ -1,89 +1,1 @@
-<template>
-	<Button
-		v-tooltip.bottom="$route.name !== 'facility-viewer' && 'Выгрузить в PDF'"
-		:label="($route.name !== 'facility-properties-viewer' && $route.name !== 'facility-events-viewer') ? 'Выгрузить' : ''"
-		icon="pi pi-file-pdf"
-		icon-pos="right"
-		severity="danger"
-		size="small"
-		:loading="loading || isPdfLoading"
-		@click="visible = true"
-	/>
-	<Dialog v-model:visible="visible" class="tw-w-[calc(100vw_-_75vw)]" draggable dismissableMask modal header="Параметры выгрузки PDF">
-		<div class="py-2 tw-space-y-6">
-			<OptionInput label="Формат">
-				<SelectButton v-model="format" :options="options" />
-			</OptionInput>
-			<OptionInput label="Отступы">
-				<InputNumber
-					v-model="indents"
-					input-class="tw-w-32"
-					inputId="minmax-buttons"
-					placeholder="0 см"
-					suffix=" см"
-					mode="decimal"
-					showButtons
-					:min="0"
-					:max="16"
-				/>
-			</OptionInput>
-			<OptionInput label="Суффикс">
-				<InputText v-model="suffix" class="tw-w-44" placeholder="Отчёт" />
-			</OptionInput>
-		</div>
-		<template #footer>
-			<Button label="Отменить" icon="pi pi-times" severity="danger" size="small" @click="visible = false" />
-			<Button
-				label="Выгрузить"
-				icon="pi pi-check"
-				severity="success"
-				size="small"
-				autofocus
-				:loading="isPdfLoading"
-				@click="handleMakePdf(printRef, facilityName)"
-			/>
-		</template>
-	</Dialog>
-</template>
-
-<script setup lang="ts">
-	import { Ref, ref } from 'vue'
-
-	import { handlerToast } from 'shared/lib'
-	import { OptionInput } from 'shared/ui/forms'
-
-	import { createPdfFromHtml } from '..'
-
-	defineProps<{
-		printRef: Ref<HTMLElement>
-		facilityName: string
-		loading: boolean
-	}>()
-
-	let visible = ref(false)
-	let isPdfLoading = ref<boolean>(false)
-
-	const format = ref<'A3' | 'A4'>('A3')
-	const options = ref(['A3', 'A4'])
-
-	const indents = ref()
-	const suffix = ref()
-
-	const handleMakePdf = (ref: any, name: string) => {
-		isPdfLoading.value = true
-		try {
-			createPdfFromHtml({
-				element: ref,
-				format: format.value,
-				indents: indents.value,
-				name: name,
-				suffix: suffix.value
-			})
-		} catch (error: unknown) {
-			handlerToast['error']('Ошибка выгрузки', error)
-		} finally {
-			isPdfLoading.value = false
-			visible.value = false
-		}
-	}
-</script>
+<template>	<Button		v-tooltip.bottom="$route.name !== 'facility-viewer' && 'Выгрузить в PDF'"		:label="			$route.name !== 'facility-properties-viewer' && $route.name !== 'facility-events-viewer' ? 'Выгрузить' : ''		"		icon="pi pi-file-pdf"		icon-pos="right"		severity="danger"		size="small"		:loading="loading || isPdfLoading"		@click="visible = true"	/>	<Dialog		v-model:visible="visible"		class="tw-w-[calc(100vw_-_75vw)]"		draggable		dismissableMask		modal		header="Параметры выгрузки PDF"	>		<div class="py-2 tw-space-y-6">			<OptionInput label="Формат">				<SelectButton v-model="format" :options="options" />			</OptionInput>			<OptionInput label="Отступы">				<InputNumber					v-model="indents"					input-class="tw-w-32"					inputId="minmax-buttons"					placeholder="0 см"					suffix=" см"					mode="decimal"					showButtons					:min="0"					:max="16"				/>			</OptionInput>			<OptionInput label="Суффикс">				<InputText v-model="suffix" class="tw-w-44" placeholder="Отчёт" />			</OptionInput>		</div>		<template #footer>			<Button label="Отменить" icon="pi pi-times" severity="danger" size="small" @click="visible = false" />			<Button				label="Выгрузить"				icon="pi pi-check"				severity="success"				size="small"				autofocus				:loading="isPdfLoading"				@click="handleMakePdf(printRef, facilityName)"			/>		</template>	</Dialog></template><script setup lang="ts">	import { Ref, ref } from 'vue'	import { handlerToast } from 'shared/lib'	import { OptionInput } from 'shared/ui/forms'	import { createPdfFromHtml } from '..'	defineProps<{		printRef: Ref<HTMLElement>		facilityName: string		loading: boolean	}>()	let visible = ref(false)	let isPdfLoading = ref<boolean>(false)	const format = ref<'A3' | 'A4'>('A3')	const options = ref(['A3', 'A4'])	const indents = ref()	const suffix = ref()	const handleMakePdf = (ref: any, name: string) => {		isPdfLoading.value = true		try {			createPdfFromHtml({				element: ref,				format: format.value,				indents: indents.value,				name: name,				suffix: suffix.value			})		} catch (error: unknown) {			handlerToast['error']('Ошибка выгрузки', error)		} finally {			isPdfLoading.value = false			visible.value = false		}	}</script>

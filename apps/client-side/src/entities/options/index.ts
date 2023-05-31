@@ -1,1 +1,0 @@
-export * as optionModel from './model'

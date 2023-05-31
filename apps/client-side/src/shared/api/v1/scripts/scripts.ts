@@ -6,7 +6,8 @@ import apiInstance from '../base'
 import type { IScriptResponse } from '../models'
 
 export interface IScriptParams {
-	design_web?: Text
+	design_web?: any
+	for_facility?: number
 }
 
 export interface ICurrentScript {
@@ -18,22 +19,22 @@ export interface IUpdateScriptProps {
 	params: IScriptParams
 }
 
-export const getScripts = (): AxiosPromise<IScriptResponse[]> => {
+export const getAllScripts = (): AxiosPromise<IScriptResponse[]> => {
 	return apiInstance.get(RESOURCE['scripts'])
 }
 
-export const getScript = ({ id }: ICurrentScript): AxiosPromise<IScriptResponse> => {
+export const getScriptById = ({ id }: ICurrentScript): AxiosPromise<IScriptResponse> => {
 	return apiInstance.get(RESOURCE['scripts'] + `/${id}`)
 }
 
-export const crtScript = (params: IScriptParams): AxiosPromise<IScriptResponse> => {
+export const createNewScript = (params: IScriptParams): AxiosPromise<IScriptResponse> => {
 	return apiInstance.post(RESOURCE['scripts'], params)
 }
 
-export const delScript = ({ id }: ICurrentScript) => {
+export const deleteScriptById = ({ id }: ICurrentScript) => {
 	return apiInstance.delete(RESOURCE['scripts'] + `/${id}`)
 }
 
-export const updScript = ({ id, params }: IUpdateScriptProps): AxiosPromise<IScriptResponse> => {
+export const updateScriptById = ({ id, params }: IUpdateScriptProps): AxiosPromise<IScriptResponse> => {
 	return apiInstance.put(RESOURCE['scripts'] + `/${id}`, params)
 }

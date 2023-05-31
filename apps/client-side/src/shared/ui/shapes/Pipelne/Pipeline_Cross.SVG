@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<?xml-stylesheet type="text/css" href="..\css\base.css" ?>
+
+<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1"  width="72" height="72" viewBox="0 0 72 72"
+		preserveAspectRatio="none" xml:space="preserve">
+	<title>Пересечение</title>
+	<defs>
+		<linearGradient id="KeyGradient" gradientUnits="userSpaceOnUse" x1="0" y1="24" x2="0" y2="48">
+			<stop style="stop-opacity:1;stop-color:#918f90" offset="0" />
+			<stop style="stop-opacity:1;stop-color:#e3e2e2" offset="0.50" />
+			<stop style="stop-opacity:1;stop-color:#868485" offset="1" />
+		 </linearGradient>
+		 <linearGradient id="KeyGradient2" gradientUnits="userSpaceOnUse" x1="24" y1="0" x2="48" y2="0">
+			<stop style="stop-opacity:1;stop-color:#918f90" offset="0" />
+			<stop style="stop-opacity:1;stop-color:#e3e2e2" offset="0.50" />
+			<stop style="stop-opacity:1;stop-color:#868485" offset="1" />
+		</linearGradient>
+		<linearGradient id="OilGradient" gradientUnits="userSpaceOnUse" x1="0" y1="24" x2="0" y2="48">
+			<stop style="stop-opacity:1;stop-color:#4D4D4D" offset="0" />
+			<stop style="stop-opacity:1;stop-color:grey" offset="0.5" />
+			<stop style="stop-opacity:1;stop-color:#4D4D4D" offset="1" />
+		 </linearGradient>
+		 <linearGradient id="OilGradient2" gradientUnits="userSpaceOnUse" x1="24" y1="0" x2="48" y2="0">
+			<stop style="stop-opacity:1;stop-color:#4D4D4D" offset="0" />
+			<stop style="stop-opacity:1;stop-color:grey" offset="0.5" />
+			<stop style="stop-opacity:1;stop-color:#4D4D4D" offset="1" />
+		 </linearGradient>
+		 <rect id = "main" y="24" width="72" height="24" />
+		 <path id = "path0" d="M 24,0  v 24 Q 34 34 48 24 V 0 z" />
+		 <path id = "path1" d="M 24,72 V 48 Q 36 36 48 48 V 72 z" />
+		 </defs>
+	<g class="state-0">   
+		<use href="#main" fill="url(#KeyGradient)" />
+		<use href="#path0" fill="url(#KeyGradient2)" />
+		<use href="#path1" fill="url(#KeyGradient2)" />
+	  </g>
+	<g class="state-1">
+		<use href="#main" fill="url(#OilGradient)" />
+		<use href="#path0" fill="url(#OilGradient2)" />
+		<use href="#path1" fill="url(#OilGradient2)" />
+	</g>
+</svg>

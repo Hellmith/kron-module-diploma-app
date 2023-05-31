@@ -5,8 +5,9 @@ import { APP } from 'shared/config'
 import { eventModel } from 'entities/event'
 import { facilityModel } from 'entities/facility'
 import { facilityTypeModel } from 'entities/facility-type'
-import { optionModel } from 'entities/options'
+import { optionModel } from 'entities/option'
 import { propertyModel } from 'entities/property'
+import { scriptModel } from 'entities/script'
 import { userModel } from 'entities/user'
 
 import { authModel } from 'features/auth'
@@ -19,6 +20,7 @@ const { NAMESPACE: FACILITY_TYPE, module: facilityTypeModule } = facilityTypeMod
 const { NAMESPACE: PROPERTY, module: propertyModule } = propertyModel
 const { NAMESPACE: OPTION, module: optionModule } = optionModel
 const { NAMESPACE: EVENT, module: eventModule } = eventModel
+const { NAMESPACE: SCRIPT, module: scriptModule } = scriptModel
 
 // Feature models
 const { NAMESPACE: PAGE, module: pageModule } = pageModel
@@ -42,6 +44,7 @@ export const store = createStore({
 		[PROPERTY]: propertyModule,
 		[OPTION]: optionModule,
 		[EVENT]: eventModule,
+		[SCRIPT]: scriptModule,
 
 		[PAGE]: pageModule,
 		[AUTH]: authModule

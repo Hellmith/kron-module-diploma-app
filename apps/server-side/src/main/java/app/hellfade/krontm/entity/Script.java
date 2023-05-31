@@ -29,4 +29,6 @@ public class Script extends BaseEntity {
 
 	@Column(name = "design_web", columnDefinition = "text")
 	private String design_web;
+
+	private Integer for_facility;
 }

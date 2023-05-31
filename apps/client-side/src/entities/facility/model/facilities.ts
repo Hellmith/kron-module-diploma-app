@@ -75,7 +75,10 @@ export const module = {
 			}
 		},
 
-		async updateFacilityAsync({ commit }: ICommit, { id, params }: v1Api.facilities.IUpdateFacilityProps): Promise<void> {
+		async updateFacilityAsync(
+			{ commit }: ICommit,
+			{ id, params }: v1Api.facilities.IUpdateFacilityProps
+		): Promise<void> {
 			try {
 				commit('updateDetail', await v1Api.facilities.updateFacilityById({ id, params }))
 			} catch (e: unknown) {
