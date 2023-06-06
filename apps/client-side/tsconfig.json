@@ -1,1 +1,20 @@
-{	"compilerOptions": {		"allowJs": true,		"esModuleInterop": false,		"allowSyntheticDefaultImports": true,		"types": ["vite/client", "vitest"],		"baseUrl": "./src"	},	"files": [],	"include": [],	"references": [		{			"path": "./tsconfig.app.json"		},		{			"path": "./tsconfig.spec.json"		}	],	"extends": "../../tsconfig.base.json"}
+{
+	"compilerOptions": {
+		"allowJs": true,
+		"esModuleInterop": false,
+		"allowSyntheticDefaultImports": true,
+		"types": ["vite/client", "vitest"],
+		"baseUrl": "./src"
+	},
+	"files": [],
+	"include": [],
+	"references": [
+		{
+			"path": "./tsconfig.app.json"
+		},
+		{
+			"path": "./tsconfig.spec.json"
+		}
+	],
+	"extends": "../../tsconfig.base.json"
+}

@@ -1,7 +1,7 @@
 <template>
-	<div class="tw-grid tw-h-full tw-w-full tw-grid-cols-12">
-		<div class="tw-col-span-10">
-			<div ref="viewport" class="viewport" @click="selectNone()">
+	<div class="tw-grid tw-h-full tw-w-full tw-grid-cols-12 tw-gap-4">
+		<div class="tw-col-span-10 tw-flex tw-h-full tw-flex-col tw-gap-16">
+			<div ref="viewport" class="viewport tw-h-1/2" @click="selectNone()">
 				<div v-if="scadaItems.length === 0">Схема не существует.</div>
 				<div v-for="i in scadaItems" :key="i.id" :data-target-id="i.id" :class="{
 					item: true,
@@ -35,6 +35,14 @@
 	middle: true
 }" :isDisplayInnerSnapDigit="true" @drag="onDrag" @resize="onResize" @rotate="onRotate" />
 			</div>
+			<div class="tw-h-1/2">
+				<DataTable scrollable class='p-datatable-sm fadein animation-duration-300 animation-iteration-1 animation-ease-in' sortField="id" :sort-order="-1"
+					resizable-columns column-resize-mode="fit" :value="properties.filter((p: Property) => p.is_visible === true)" dataKey="id">
+					<Column header="#" field="id" headerStyle="width:3rem" />
+					<Column v-for="col of selectedColumns" :key="col[ 'field' ]" :filter-field="col[ 'field' ]" :field="col[ 'field' ]" :header="col[ 'header' ]"
+						sortable />
+				</DataTable>
+			</div>
 		</div>
 		<div class="tw-col-span-2 tw-flex tw-flex-col tw-gap-2 tw-rounded-md tw-border tw-p-4">
 			<div class="p-buttonset tw-w-full">
@@ -44,7 +52,7 @@
 					:disabled="facility.mode == 0 || facility.mode == 2" @click.prevent="handleStopFacility()" />
 			</div>
 			<SplitButton v-if="authorities === `ADMIN`" :disabled="facility.mode == 0 || facility.mode == 1" label="Сохранить" icon="pi pi-save" size="small"
-				severity="info" :model="actions" :loading="isCreateScript" @click="handleSaveScada()" />
+				severity="info" :model="actions" :loading="isCreateLoading || isUpdateLoading" @click="handleSaveScada()" />
 			<div class="tw-h-max">
 				<p>Выбранный объект</p>
 				<div class="tw-h-full tw-overflow-y-auto tw-px-2 tw-font-mono">
@@ -61,8 +69,7 @@
 							<li class="tw-font-semibold">
 								<span class="tw-font-medium tw-text-gray-600"> Положение: </span>
 								{{ currentScadaItem?.x }}x<span class="tw-font-medium tw-text-gray-600">,</span>
-								{{ currentScadaItem?.y }}y<span class="tw-font-medium tw-text-gray-600">,</span>
-								{{ currentScadaItem?.z }}z
+								{{ currentScadaItem?.y }}y
 							</li>
 							<li class="tw-font-semibold">
 								<span class="tw-font-medium tw-text-gray-600"> Размер: </span>
@@ -92,7 +99,7 @@
 							</li>
 							<li class="tw-font-semibold">
 								<span class="tw-font-medium tw-text-gray-600"> Положение: </span> {{ i.x }}x<span class="tw-font-medium tw-text-gray-600">,</span>
-								{{ i.y }}y<span class="tw-font-medium tw-text-gray-600">,</span> {{ i.z }}z
+								{{ i.y }}y<span class="tw-font-medium tw-text-gray-600">,</span>
 							</li>
 							<li class="tw-font-semibold">
 								<span class="tw-font-medium tw-text-gray-600"> Размер: </span> {{ i.w }}w<span class="tw-font-medium tw-text-gray-600">,</span>
@@ -130,63 +137,6 @@
 	</Sidebar>
 </template>
 
-<style>
-	.viewport {
-		box-sizing: border-box;
-		position: relative;
-		width: 100%;
-		height: 100%;
-	}
-
-	.item {
-		box-sizing: border-box;
-		position: absolute;
-		top: 0px;
-		left: 0px;
-		text-align: center;
-		font-weight: normal;
-		font-size: 20px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		border-radius: 1px;
-		user-select: none;
-	}
-
-	.item .decorator {
-		position: absolute;
-		border: 1px solid #4af;
-		border-radius: 4px;
-		background-color: #4af;
-		color: white;
-		text-align: center;
-		font-weight: normal;
-		line-height: 1;
-	}
-
-	.item .decorator-delete {
-		top: 0px;
-		right: -32px;
-		width: 24px;
-		height: 24px;
-		text-align: center;
-		font-size: 14px;
-		cursor: pointer;
-	}
-
-	.item .decorator-size {
-		position: absolute;
-		bottom: -30px;
-		left: 0px;
-		user-select: none;
-		width: auto;
-		height: auto;
-		font-size: 14px;
-		padding: 4px 8px;
-		white-space: nowrap;
-	}
-</style>
-
 <script setup lang="ts">
 	import { useKeyModifier } from '@vueuse/core'
 	import { useToast } from 'primevue/usetoast'
@@ -195,10 +145,12 @@
 	import Moveable from 'vue3-moveable'
 	import { useStore } from 'vuex'
 
+	import { Property } from 'shared/api'
 	import shapes from 'shared/ui/shapes'
 	import { SidebarHeader } from 'shared/ui/sidebar-header'
 
 	import { facilityModel } from 'entities/facility'
+	import { propertyModel } from 'entities/property'
 	import { scriptModel } from 'entities/script'
 
 	import { authModel } from 'features/auth'
@@ -209,7 +161,11 @@
 
 	onMounted(() => {
 		store.dispatch(scriptModel.actions.getScriptListAsync)
+		store.dispatch(propertyModel.actions.getPropertyListAsync)
 	})
+
+	const isCreateLoading = computed(() => store.getters[ scriptModel.getters[ 'isCreateLoading' ] ])
+	const isUpdateLoading = computed(() => store.getters[ scriptModel.getters[ 'isUpdateLoading' ] ])
 
 	const facility = computed(() => store.getters[ facilityModel.getters.useDetail ])
 
@@ -221,6 +177,16 @@
 		const scriptsValue = scripts.value
 		return scriptsValue ? scriptsValue.find((s: any) => s.for_facility === Number(params.id)) : null
 	})
+
+	const properties = computed(() => store.getters[ propertyModel.getters[ 'useList' ] ])
+	const columns = ref([
+		{ field: 'name', header: 'Наименование' },
+		{ field: 'description', header: 'Описание' },
+		{ field: 'value', header: 'Значение' },
+		{ field: 'unit', header: 'Ед. измер.' },
+		{ field: 'option.value', header: 'Предел' }
+	])
+	const selectedColumns = ref(columns.value)
 
 	const currentScadaItem = ref()
 	const scadaItems = ref<any>([])
@@ -237,37 +203,45 @@
 		const schema = JSON.stringify(scadaItems.value)
 
 		if (facility.value.script === null) {
-			store.dispatch(scriptModel.actions.createScriptAsync, {
-				design_web: schema,
-				for_facility: facility.value.id
-			}).then(() => {
-				store.dispatch(facilityModel.actions.updateFacilityAsync, {
-					id: params.id,
+			store
+				.dispatch(scriptModel.actions.createScriptAsync, {
+					design_web: schema,
+					for_facility: facility.value.id
+				})
+				.then(() => {
+					store
+						.dispatch(facilityModel.actions.updateFacilityAsync, {
+							id: params.id,
+							params: {
+								name: facility.value.name,
+								mode: facility.value.mode,
+								coord_x: facility.value.coord_x,
+								coord_y: facility.value.coord_y,
+								facility_type: facility.value.facility_type,
+								script: script.value
+							}
+						})
+						.then(() => {
+							store.dispatch(facilityModel.actions.getFacilityDetailAsync, {
+								id: params.id
+							})
+						})
+				})
+		} else {
+			store
+				.dispatch(scriptModel.actions.updateScriptAsync, {
+					id: script.value.id,
 					params: {
-						name: facility.value.name,
-						mode: facility.value.mode,
-						coord_x: facility.value.coord_x,
-						coord_y: facility.value.coord_y,
-						facility_type: facility.value.facility_type,
-						script: script.value
+						design_web: schema
 					}
-				}).then(() => {
-					store.dispatch(facilityModel.actions.getFacilityDetailAsync, {
-						id: params.id
+				})
+				.then(() => {
+					setTimeout(() => {
+						store.dispatch(facilityModel.actions.getFacilityDetailAsync, {
+							id: params.id
+						}), 3000
 					})
 				})
-			})
-		} else {
-			store.dispatch(scriptModel.actions.updateScriptAsync, {
-				id: script.value.id,
-				params: {
-					design_web: schema
-				}
-			}).then(() => {
-				store.dispatch(facilityModel.actions.getFacilityDetailAsync, {
-					id: params.id
-				})
-			})
 		}
 	}
 
@@ -334,6 +308,7 @@
 	}
 
 	function getRandomFloat(min: any, max: any, decimals: any) {
+		// eslint-disable-next-line no-mixed-operators
 		const str = (Math.random() * (max - min) + min).toFixed(decimals)
 
 		return parseFloat(str)
@@ -346,7 +321,7 @@
 
 	const handleCreateSkadaItem = (id: number, title = '', image: any, el: any) => {
 		return {
-			id: getRandomFloat(id, id + 0.5, 2),
+			id: getRandomFloat(id, id + 0.5, 3),
 			title,
 			x: 0,
 			y: 0,
@@ -354,8 +329,7 @@
 			w: el.offsetWidth,
 			h: el.offsetHeight,
 			r: 0,
-			background: `url('${image}') no-repeat center/contain`,
-			imageUrl: image
+			background: `url('${image}') no-repeat center/contain`
 		}
 	}
 
@@ -394,27 +368,30 @@
 		const item = findItem(e.target)
 		if (!item) return
 
+		// eslint-disable-next-line prefer-destructuring
 		item.x = e.beforeTranslate[ 0 ]
+		// eslint-disable-next-line prefer-destructuring
 		item.y = e.beforeTranslate[ 1 ]
 
 		e.target.style.transform = e.transform
+
 	}
+
 	const onResize = (e: any) => {
-		const item = findItem(e.target)
-		if (!item) return
+		if (!currentScadaItem.value) return
 
-		item.w = e.width
-		item.h = e.height
+		currentScadaItem.value.w = Math.floor(e.width)
+		currentScadaItem.value.h = Math.floor(e.height)
 
-		e.target.style.width = `${e.width}px`
-		e.target.style.height = `${e.height}px`
+		e.target.style.width = `${Math.floor(e.width)}px`
+		e.target.style.height = `${Math.floor(e.height)}px`
 	}
+
 	const onRotate = (e: any) => {
-		const item = findItem(e.target)
-		if (item) {
-			item.r = e.beforeRotate
-			e.target.style.transform = e.drag.transform
-		}
+		if (!currentScadaItem.value) return
+
+		currentScadaItem.value.r = e.beforeRotate % 360
+		e.target.style.transform = e.drag.transform
 	}
 </script>
 
@@ -423,5 +400,60 @@
 		display: block;
 		left: -100%;
 		top: 0;
+	}
+
+	.viewport {
+		box-sizing: border-box;
+		position: relative;
+		width: 100%;
+		height: 100%;
+	}
+
+	.item {
+		box-sizing: border-box;
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		text-align: center;
+		font-weight: normal;
+		font-size: 20px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		border-radius: 1px;
+		user-select: none;
+	}
+
+	.item .decorator {
+		position: absolute;
+		border: 1px solid #4af;
+		border-radius: 4px;
+		background-color: #4af;
+		color: white;
+		text-align: center;
+		font-weight: normal;
+		line-height: 1;
+	}
+
+	.item .decorator-delete {
+		top: 0px;
+		right: -32px;
+		width: 24px;
+		height: 24px;
+		text-align: center;
+		font-size: 14px;
+		cursor: pointer;
+	}
+
+	.item .decorator-size {
+		position: absolute;
+		bottom: -30px;
+		left: 0px;
+		user-select: none;
+		width: auto;
+		height: auto;
+		font-size: 14px;
+		padding: 4px 8px;
+		white-space: nowrap;
 	}
 </style>

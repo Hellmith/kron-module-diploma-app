@@ -26,10 +26,6 @@
 
 	import { Routing } from 'pages'
 
-	/**
-	 * Reactive computation
-	 * @returns Layout Template
-	 */
 	const currentLayout = computed(() => {
 		const { meta } = useRoute()
 

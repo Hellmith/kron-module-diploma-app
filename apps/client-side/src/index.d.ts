@@ -9,7 +9,7 @@ declare global {
 		list?: E[]
 		detail?: Record<E>
 
-		listLoading?: boolean
+		listLoading?: boolean 
 		detailLoading?: boolean
 
 		createLoading?: boolean
