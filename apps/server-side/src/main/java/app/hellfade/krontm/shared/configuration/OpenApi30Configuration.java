@@ -1,5 +1,11 @@
+/**
+ * Определение пакета класса
+ */
 package app.hellfade.krontm.shared.configuration;
 
+/**
+ * Импорт библиотек
+ */
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;

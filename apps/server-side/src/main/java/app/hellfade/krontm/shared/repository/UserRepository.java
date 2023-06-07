@@ -1,5 +1,11 @@
+/**
+ * Определение пакета класса
+ */
 package app.hellfade.krontm.shared.repository;
 
+/**
+ * Импорт библиотек
+ */
 import app.hellfade.krontm.entity.User;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

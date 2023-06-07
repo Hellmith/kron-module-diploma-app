@@ -1,3 +1,6 @@
+/**
+ * Определение пакета класса
+ */
 package app.hellfade.krontm.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

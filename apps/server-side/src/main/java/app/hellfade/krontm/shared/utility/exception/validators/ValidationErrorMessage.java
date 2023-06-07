@@ -1,5 +1,11 @@
+/**
+ * Определение пакета класса
+ */
 package app.hellfade.krontm.shared.utility.exception.validators;
 
+/**
+ * Импорт библиотек
+ */
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;

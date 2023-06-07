@@ -1,5 +1,11 @@
+/**
+ * Определение пакета класса
+ */
 package app.hellfade.krontm.shared.utility.exception.validators;
 
+/**
+ * Импорт библиотек
+ */
 import app.hellfade.krontm.shared.utility.exception.ApiErrorMessage;
 import java.util.Date;
 import javax.validation.ConstraintViolation;

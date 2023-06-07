@@ -1,3 +1,6 @@
+/**
+ * Определение пакета класса
+ */
 package app.hellfade.krontm.entity;
 
 import javax.persistence.Column;

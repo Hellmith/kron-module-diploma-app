@@ -1,5 +1,11 @@
+/**
+ * Определение пакета класса
+ */
 package app.hellfade.krontm.shared.utility.security;
 
+/**
+ * Импорт библиотек
+ */
 import app.hellfade.krontm.model.user.SecurityUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -11,19 +17,27 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+/**
+ * Объявление класса UnauthorizedEntryPoint
+ * @Component - указывает, что данный класс является компонентом Spring
+ */
 @Component
 public class TokenUtils {
 
+	// Константы с типами устройств для аудитории токена
 	private final String AUDIENCE_UNKNOWN = "unknown";
 	private final String AUDIENCE_WEB = "web";
 	private final String AUDIENCE_MOBILE = "mobile";
 	private final String AUDIENCE_TABLET = "tablet";
 
+	// Поля с секретным ключом и временем жизни токена, полученные из конфигурации приложения
 	@Value("${hellfade.token.secret}")
 	private String secret;
 
 	@Value("${hellfade.token.expiration}")
 	private Long expiration;
+
+	// Методы для извлечения информации из токена
 
 	public String getUsernameFromToken(String token) {
 		String username;
@@ -79,6 +93,8 @@ public class TokenUtils {
 		return claims;
 	}
 
+	// Методы для проверки срока действия токена
+
 	private Date generateCurrentDate() {
 		return new Date(System.currentTimeMillis());
 	}
@@ -95,6 +111,8 @@ public class TokenUtils {
 	private Boolean isCreatedBeforeLastPasswordReset(Date created, Date lastPasswordReset) {
 		return (lastPasswordReset != null && created.before(lastPasswordReset));
 	}
+
+	// Методы для генерации параметров токена
 
 	private String generateAudience(String device) {
 		String audience = this.AUDIENCE_UNKNOWN;

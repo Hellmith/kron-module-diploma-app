@@ -1,3 +1,6 @@
+/**
+ * Определение пакета класса
+ */
 package app.hellfade.krontm.model.user;
 
 import app.hellfade.krontm.entity.User;

@@ -1,5 +1,11 @@
+/**
+ * Определение пакета класса
+ */
 package app.hellfade.krontm.shared.utility.dto.request;
 
+/**
+ * Импорт библиотек
+ */
 import app.hellfade.krontm.shared.utility.dto.base.BaseModel;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;

@@ -1,3 +1,6 @@
+/**
+ * Определение пакета класса
+ */
 package app.hellfade.krontm.controller;
 
 import app.hellfade.krontm.entity.FacilityType;

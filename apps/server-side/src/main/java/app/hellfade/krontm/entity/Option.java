@@ -1,3 +1,6 @@
+/**
+ * Определение пакета класса
+ */
 package app.hellfade.krontm.entity;
 
 import app.hellfade.krontm.entity.base.BaseEntity;

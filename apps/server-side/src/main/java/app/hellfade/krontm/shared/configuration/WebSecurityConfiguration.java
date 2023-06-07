@@ -1,5 +1,11 @@
+/**
+ * Определение пакета класса
+ */
 package app.hellfade.krontm.shared.configuration;
 
+/**
+ * Импорт библиотек
+ */
 import app.hellfade.krontm.shared.utility.security.AuthenticationTokenFilter;
 import app.hellfade.krontm.shared.utility.security.TokenUtils;
 import app.hellfade.krontm.shared.utility.security.UnauthorizedEntryPoint;
@@ -20,9 +26,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-/**
- * Конфигурация WebSecurity
- */
+
 @Configuration
 @RequiredArgsConstructor
 public class WebSecurityConfiguration {

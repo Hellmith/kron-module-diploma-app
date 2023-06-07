@@ -1,3 +1,6 @@
+/**
+ * Определение пакета класса
+ */
 package app.hellfade.krontm.service.impl;
 
 import app.hellfade.krontm.entity.Property;

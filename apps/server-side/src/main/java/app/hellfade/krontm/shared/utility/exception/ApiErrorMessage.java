@@ -1,5 +1,11 @@
+/**
+ * Определение пакета класса
+ */
 package app.hellfade.krontm.shared.utility.exception;
 
+/**
+ * Импорт библиотек
+ */
 import app.hellfade.krontm.shared.utility.exception.validators.Violation;
 import java.util.Date;
 import java.util.List;
